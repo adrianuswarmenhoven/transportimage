@@ -1,0 +1,216 @@
+/*
+This program reads an image file and converts it into an HTML table.
+Usage: <program> <input image file> <output HTML file>
+It uses the 'no news is good news' philosophy for error handling. So if there is nothing in your terminal, the program ran successfully.
+
+Pro:
+It is more or less the simplest way to convert an image into an HTML table.
+Each pixel in the image is represented by a cell in the table. The color of the cell is the color of the pixel in the image.
+The recipient does not need any special software to view the image. A web browser is enough.
+
+Con:
+The huge size increase. A 40 KB image can easily become a 4 MB HTML file.
+This is because each pixel is represented by a cell in the table.
+The table is a 2D grid of cells, and each cell is a pixel.
+So, a 100x100 pixel image will be represented by a 100x100 table, which is 10,000 cells.
+
+File compression helps, but the size increase is still significant.
+*/
+package main
+
+import (
+	"fmt"
+	"image"
+	_ "image/jpeg"
+	"io"
+	"log/slog"
+	"os"
+	"path"
+	"path/filepath"
+)
+
+var (
+	inFile  string
+	workDir string = "output"
+)
+
+const (
+	templateDir   = "template"
+	imageCodeFile = "drawImage.go"
+)
+
+func main() {
+	args := os.Args
+	if len(args) == 3 {
+		inFile = args[1]
+		workDir = args[2]
+	} else {
+		slog.Info("Usage: imageToExecutable <inputfile> <outputdir>")
+		os.Exit(1)
+	}
+	imgfile, err := os.Open(inFile)
+	if err != nil {
+		slog.Error("Error opening input file", "error", err)
+		os.Exit(1)
+	}
+	defer imgfile.Close()
+	imgCfg, _, err := image.DecodeConfig(imgfile)
+	if err != nil {
+		slog.Error("Error decoding image config", "error", err)
+		os.Exit(1)
+	}
+	width := imgCfg.Width
+	height := imgCfg.Height
+	imgfile.Seek(0, 0)
+	img, _, err := image.Decode(imgfile)
+	if err != nil {
+		slog.Error("Error decoding image", "error", err)
+		os.Exit(1)
+	}
+
+	os.Mkdir(workDir, os.FileMode(int(0775)))
+
+	dir, err := os.ReadDir(workDir)
+	if err != nil {
+		slog.Error("Error reading working directory", "error", err)
+		os.Exit(1)
+	}
+	for _, d := range dir {
+		os.RemoveAll(path.Join([]string{workDir, d.Name()}...))
+	}
+
+	dir, err = os.ReadDir(templateDir)
+	if err != nil {
+		slog.Error("Error reading template directory", "error", err)
+		os.Exit(1)
+	}
+	for _, d := range dir {
+		var srcfd *os.File
+		var dstfd *os.File
+		var srcinfo os.FileInfo
+
+		src := filepath.Join(templateDir, d.Name())
+		dst := filepath.Join(workDir, d.Name())
+
+		if srcfd, err = os.Open(src); err != nil {
+			slog.Error("Error opening template file", "error", err)
+			os.Exit(1)
+		}
+
+		if dstfd, err = os.Create(dst); err != nil {
+			slog.Error("Error creating output file", "error", err)
+			srcfd.Close()
+			os.Exit(1)
+		}
+
+		if _, err = io.Copy(dstfd, srcfd); err != nil {
+			slog.Error("Error copying template file", "file", d.Name(), "error", err)
+			srcfd.Close()
+			dstfd.Close()
+			os.Exit(1)
+		}
+		if srcinfo, err = os.Stat(src); err != nil {
+			slog.Error("Error getting file info", "file", d.Name(), "error", err)
+			srcfd.Close()
+			dstfd.Close()
+			os.Exit(1)
+		}
+		err = os.Chmod(dst, srcinfo.Mode())
+		if err != nil {
+			slog.Error("Error setting file permissions", "file", d.Name(), "error", err)
+			srcfd.Close()
+			dstfd.Close()
+			os.Exit(1)
+		}
+	}
+
+	paramsData := fmt.Sprintf(templateParameter, width, height)
+	err = os.WriteFile(path.Join(workDir, "params.go"), []byte(paramsData), os.FileMode(int(0664)))
+	if err != nil {
+		slog.Error("Error writing params file", "error", err)
+		os.Exit(1)
+	}
+
+	pixelstring := ""
+
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			r1, g1, b1, a1 := img.At(x, y).RGBA()
+			r := r1 / 256
+			g := g1 / 256
+			b := b1 / 256
+			a := a1 / 256
+			pixelstring += fmt.Sprintf("pixBuffer.SetRGBA(%d, %d, color.RGBA{%d, %d, %d, %d})\n", x, y, r, g, b, a)
+		}
+	}
+	err = os.WriteFile(path.Join(workDir, imageCodeFile), []byte(fmt.Sprintf(templateDrawImage, pixelstring)), os.FileMode(int(0664)))
+	if err != nil {
+		slog.Error("Error writing drawImage file", "error", err)
+		os.Exit(1)
+	}
+
+}
+
+const (
+	templateParameter = `
+	package main
+
+var (
+	winTitle = "Awesome Image"
+
+	winWidth, winHeight = %d, %d
+)
+`
+
+	templateDrawImage = `
+package main
+
+import (
+	"image/color"
+
+	"golang.org/x/exp/shiny/screen"
+)
+
+func drawScene(w screen.Window) {
+ %s
+}
+	`
+
+	// Basically a simple HTML file
+	htmlPreamble = `<html>
+		<head>
+		<title>An awesome image</title>		
+		<style type="text/css">
+		body {background-color: black;}
+
+		.table{
+			width:960px;
+			border: 0px;
+		}
+		td{
+			width: 1px;
+			height: 1px;
+			border: 0px;
+		}
+		div {
+			height: 500px;
+			-webkit-align-content: center;
+			align-content: center;
+		}
+		</style>
+		</head>
+		<body backgroundcolour>
+		<div style="height:80px;">&nbsp;</div>
+		<div align="center">
+		<table class="imgtable" border="0" cellpadding="0" cellspacing="0" style="margin-left: auto; margin-right: auto; font-size:0px;">
+			   `
+	htmlTableRowStart = `<tr>`
+	htmlTableRowEnd   = `</tr>`
+	// Each cell is a pixel
+	htmlTableCellData = `<td style="background-color:rgb(%d,%d,%d);"></td>`
+
+	htmlPostamble = `</table><br/>
+		</div>
+		</body>
+	</html>`
+)
