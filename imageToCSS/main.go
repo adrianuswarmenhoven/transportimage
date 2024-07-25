@@ -12,25 +12,22 @@ import (
 )
 
 const (
-	defaultInputFile   = "../images/example_image.jpg"
-	defaultTransparent = "image_to_css_transparent.png"
-	defaultOutputFile  = "../output/image_to_csssprite.html"
 
 	definitionPlaceholder = "<$CSSDEFINITION$>"
 	instancePlaceholder   = "<$CSSINSTANCES$>"
 )
 
 var (
-	pixelMap = make(map[color.Color]int)
 
 	cssDefs         = make(map[color.Color]string)
 	cssSpriteDefIDX = make(map[color.Color]int)
 	cssInst         = make([]string, 0)
+
+	inFile string
+	outFile string
 )
 
 func main() {
-	inFile := defaultInputFile
-	outFile := defaultOutputFile
 	args := os.Args
 	if len(args) == 3 {
 		inFile = args[1]
