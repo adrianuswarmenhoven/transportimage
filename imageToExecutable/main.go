@@ -175,42 +175,4 @@ func drawScene(w screen.Window) {
  %s
 }
 	`
-
-	// Basically a simple HTML file
-	htmlPreamble = `<html>
-		<head>
-		<title>An awesome image</title>		
-		<style type="text/css">
-		body {background-color: black;}
-
-		.table{
-			width:960px;
-			border: 0px;
-		}
-		td{
-			width: 1px;
-			height: 1px;
-			border: 0px;
-		}
-		div {
-			height: 500px;
-			-webkit-align-content: center;
-			align-content: center;
-		}
-		</style>
-		</head>
-		<body backgroundcolour>
-		<div style="height:80px;">&nbsp;</div>
-		<div align="center">
-		<table class="imgtable" border="0" cellpadding="0" cellspacing="0" style="margin-left: auto; margin-right: auto; font-size:0px;">
-			   `
-	htmlTableRowStart = `<tr>`
-	htmlTableRowEnd   = `</tr>`
-	// Each cell is a pixel
-	htmlTableCellData = `<td style="background-color:rgb(%d,%d,%d);"></td>`
-
-	htmlPostamble = `</table><br/>
-		</div>
-		</body>
-	</html>`
 )
