@@ -1,0 +1,15 @@
+// THIS FILE IS ONLY USED TO KEEP THE DEVELOPMENT ENVIRONMENT HAPPY
+// WHILE WORKING ON THE TEMPLATE 'main.go' FILE
+// IT IS NOT USED IN THE FINAL OUTPUT
+//
+// DO NOT REMOVE THIS FILE AND DO NOT RENAME
+package main
+
+var (
+	winTitle = "Awesome Image"
+
+	winWidth, winHeight = 256, 256
+)
+
+func drawScene() {
+}

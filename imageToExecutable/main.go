@@ -86,6 +86,9 @@ func main() {
 		os.Exit(1)
 	}
 	for _, d := range dir {
+		if strings.Contains(d.Name(), "thisFileIsNotUsed") {
+			continue
+		}
 		var srcfd *os.File
 		var dstfd *os.File
 		var srcinfo os.FileInfo
