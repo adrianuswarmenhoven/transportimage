@@ -49,7 +49,7 @@ func main() {
 		var startTime time.Time
 		var currTime = time.Now()
 		for {
-			drawScene(w)
+			drawScene()
 			w.Upload(image.Point{0, 0}, screenBuffer, screenBuffer.Bounds())
 			w.Publish()
 			time.Sleep(time.Millisecond * 16)

@@ -27,6 +27,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 var (
@@ -131,7 +132,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	pixelstring := ""
+	pixelstring := strings.Builder{}
 
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
@@ -140,10 +141,10 @@ func main() {
 			g := g1 / 256
 			b := b1 / 256
 			a := a1 / 256
-			pixelstring += fmt.Sprintf("pixBuffer.SetRGBA(%d, %d, color.RGBA{%d, %d, %d, %d})\n", x, y, r, g, b, a)
+			pixelstring.Write([]byte(fmt.Sprintf("pixBuffer.SetRGBA(%d, %d, color.RGBA{%d, %d, %d, %d})\n", x, y, r, g, b, a)))
 		}
 	}
-	err = os.WriteFile(path.Join(workDir, imageCodeFile), []byte(fmt.Sprintf(templateDrawImage, pixelstring)), os.FileMode(int(0664)))
+	err = os.WriteFile(path.Join(workDir, imageCodeFile), []byte(fmt.Sprintf(templateDrawImage, pixelstring.String())), os.FileMode(int(0664)))
 	if err != nil {
 		slog.Error("Error writing drawImage file", "error", err)
 		os.Exit(1)
@@ -168,10 +169,9 @@ package main
 import (
 	"image/color"
 
-	"golang.org/x/exp/shiny/screen"
 )
 
-func drawScene(w screen.Window) {
+func drawScene() {
  %s
 }
 	`

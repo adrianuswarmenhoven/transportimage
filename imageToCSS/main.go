@@ -12,18 +12,16 @@ import (
 )
 
 const (
-
 	definitionPlaceholder = "<$CSSDEFINITION$>"
 	instancePlaceholder   = "<$CSSINSTANCES$>"
 )
 
 var (
-
 	cssDefs         = make(map[color.Color]string)
 	cssSpriteDefIDX = make(map[color.Color]int)
 	cssInst         = make([]string, 0)
 
-	inFile string
+	inFile  string
 	outFile string
 )
 
@@ -88,19 +86,19 @@ func main() {
 		}
 	}
 
-	CSSDEFINITIONS := ""
+	CSSDEFINITIONS := strings.Builder{}
 	for _, v := range cssDefs {
-		CSSDEFINITIONS += v
+		CSSDEFINITIONS.Write([]byte(v))
 	}
 
-	CSSINSTANCES := ""
+	CSSINSTANCES := strings.Builder{}
 	for _, v := range cssInst {
-		CSSINSTANCES += v
+		CSSINSTANCES.Write([]byte(v))
 	}
 
 	html := htmlTemplate
-	html = strings.Replace(html, definitionPlaceholder, CSSDEFINITIONS, -1)
-	html = strings.Replace(html, instancePlaceholder, CSSINSTANCES, -1)
+	html = strings.Replace(html, definitionPlaceholder, CSSDEFINITIONS.String(), -1)
+	html = strings.Replace(html, instancePlaceholder, CSSINSTANCES.String(), -1)
 
 	fmt.Fprint(htmlFile, html)
 }

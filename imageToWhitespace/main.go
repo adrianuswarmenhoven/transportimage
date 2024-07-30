@@ -51,21 +51,45 @@ var (
 	}
 )
 
+var (
+	inFile     string
+	mediumFile string
+	outFile    string
+)
+
 func main() {
-	data, err := os.ReadFile("medium/nineteen_eight_four_gutenberg_org_0100021.txt")
-	if err != nil {
-		slog.Error("Error reading file", "error", err)
+	args := os.Args
+	if len(args) == 4 {
+		inFile = args[1]
+		mediumFile = args[2]
+		outFile = args[3]
+	} else {
+		slog.Info("Usage: imageToWhitespace <inputfile> <medium> <outputfile>")
 		os.Exit(1)
 	}
 
-	img, _ := os.ReadFile("../images/example_image.jpg")
+	data, err := os.ReadFile(mediumFile)
+	if err != nil {
+		slog.Error("Error reading medium file", "error", err)
+		os.Exit(1)
+	}
+
+	img, err := os.ReadFile(inFile)
+	if err != nil {
+		slog.Error("Error reading input file", "error", err)
+		os.Exit(1)
+	}
+
+	// Encode the data of the file to string
+	// Yes, in this case we cheat because we do not get all the individual pixels
+	// but we get the whole original image file as a hexadecimal string
 	encs := hex.EncodeToString(img)
 
 	cursor := 0
 	startMarkerWritten := false
 	endMarkerWritten := false
 
-	outfile := strings.Builder{}
+	outData := strings.Builder{}
 	for _, r := range string(data) {
 		or := r
 		if r == ' ' && cursor < len(encs) {
@@ -80,14 +104,20 @@ func main() {
 			or = endMarker
 			endMarkerWritten = true
 		}
-		outfile.Write([]byte(fmt.Sprintf("%c", or)))
+		outData.Write([]byte(fmt.Sprintf("%c", or)))
 	}
 
 	// Make a trailing tail of whitespace, not ideal, but works
+	// If the medium does not have enough whitespace, we will have to add it to the end.
+	// This might make the output more suspicious
 	if cursor < len(encs) {
 		for _, r := range encs[cursor:] {
-			outfile.Write([]byte(fmt.Sprintf("%c", hexToUnicode[r])))
+			outData.Write([]byte(fmt.Sprintf("%c", hexToUnicode[r])))
 		}
 	}
-	os.WriteFile("out.txt", []byte(outfile.String()), 0644)
+	err = os.WriteFile(outFile, []byte(outData.String()), 0644)
+	if err != nil {
+		slog.Error("Error writing output file", "error", err)
+		os.Exit(1)
+	}
 }

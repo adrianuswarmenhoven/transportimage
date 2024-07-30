@@ -51,10 +51,19 @@ var (
 var (
 	screenBuffer screen.Buffer
 	pixBuffer    *image.RGBA
+	inFile       string
 )
 
 func main() {
-	data, err := os.ReadFile("../out.txt")
+	args := os.Args
+	if len(args) == 2 {
+		inFile = args[1]
+	} else {
+		slog.Info("Usage: viewer <inputfile>")
+		os.Exit(1)
+	}
+
+	data, err := os.ReadFile(inFile)
 	if err != nil {
 		slog.Error("Error reading file", "error", err)
 		os.Exit(1)
