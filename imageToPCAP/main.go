@@ -159,7 +159,8 @@ func main() {
 		}
 	}
 	if len(embedData) > 0 {
-		log.Fatal("Not enough space to embed data, needs a PCAP with more TCP packets", "stored", stored, "remaining", len(embedData))
+		slog.Error("Not enough space to embed data, needs a PCAP with more TCP packets", "stored", stored, "remaining", len(embedData))
+		os.Exit(1)
 	}
 
 }
