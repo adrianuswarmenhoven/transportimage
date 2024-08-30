@@ -35,7 +35,7 @@ This Agreement constitutes the entire agreement between the parties regarding th
 
 ## 8. No Support or Maintenance 
 
-The Licensor is under no obligation to provide support, maintenance, updates, or enhancements for the PoC.
+The Licensor is under no obligation to provide communications, support, maintenance, updates, or enhancements for the PoC.
 
 ## 9. Acknowledgment 
 
