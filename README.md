@@ -1,3 +1,5 @@
+Read the [accompanying article](https://github.com/adrianuswarmenhoven/transportimage/blob/main/HideAnythingInEverything.md) first.
+
 # Proof of Concept for transporting images through data and/or code 
 
 Please take notice of the [License](LICENSE.md) before you download and/or use any code from this repo.
