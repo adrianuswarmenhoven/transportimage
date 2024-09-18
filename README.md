@@ -1,12 +1,14 @@
 # Proof of Concept for transporting images through data and/or code 
 
+Please take notice of the [License](LICENSE.md) before you download and/or use any code from this repo.
+
 ## Rationale
 
 In cybersecurity, a lot of faith is put into so called 'techno-fixes': technological solutions to a security issue. Whilst this may be effective for some forms of malicious behavior (certain types of malware, phishing etc...), it can not cover the whole of 'data transference' between people.
 
 However, there exists a school of thought that 'if you monitor everything, you will find everything'.
 
-This, I think, is a dangerous and damaging way of thinking; the measures will break a lot of security and privacy for people and are of such a nature that these measures can not nor will ever be rolled back.
+This, I think, is a dangerous and damaging way of thinking; the measures will break a lot of security and privacy for people and are of such a nature that these measures can not nor ever will be rolled back.
 
 So, besides arguing the ethical side, I also want to demonstrate the technical futility of this way of thinking.
 
