@@ -1,3 +1,6 @@
+/*
+ * imageToCSS
+ */
 package main
 
 import (

@@ -1,3 +1,6 @@
+/*
+ * imageToPCAP is a tool to embed an image into a PCAP file.
+ */
 package main
 
 import (

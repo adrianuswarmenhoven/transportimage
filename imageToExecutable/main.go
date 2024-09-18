@@ -1,20 +1,5 @@
 /*
-This program reads an image file and converts it into an HTML table.
-Usage: <program> <input image file> <output HTML file>
-It uses the 'no news is good news' philosophy for error handling. So if there is nothing in your terminal, the program ran successfully.
-
-Pro:
-It is more or less the simplest way to convert an image into an HTML table.
-Each pixel in the image is represented by a cell in the table. The color of the cell is the color of the pixel in the image.
-The recipient does not need any special software to view the image. A web browser is enough.
-
-Con:
-The huge size increase. A 40 KB image can easily become a 4 MB HTML file.
-This is because each pixel is represented by a cell in the table.
-The table is a 2D grid of cells, and each cell is a pixel.
-So, a 100x100 pixel image will be represented by a 100x100 table, which is 10,000 cells.
-
-File compression helps, but the size increase is still significant.
+imageToExecutable
 */
 package main
 

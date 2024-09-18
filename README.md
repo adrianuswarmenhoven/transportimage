@@ -2,6 +2,8 @@
 
 Please take notice of the [License](LICENSE.md) before you download and/or use any code from this repo.
 
+**Do not run any executable from this repo unless you know what you are doing!**
+
 ## Rationale
 
 In cybersecurity, a lot of faith is put into so called 'techno-fixes': technological solutions to a security issue. Whilst this may be effective for some forms of malicious behavior (certain types of malware, phishing etc...), it can not cover the whole of 'data transference' between people.
